@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	l "github.com/mennanov/limiters"
+	l "github.com/accelbyte/limiters"
 )
 
 // slidingWindows returns all the possible SlidingWindow combinations.

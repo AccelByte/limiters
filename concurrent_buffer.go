@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 )
 
@@ -123,15 +123,15 @@ func (c *ConcurrentBufferRedis) Add(ctx context.Context, key string) (int64, err
 	done := make(chan struct{})
 	go func() {
 		defer close(done)
-		_, err = c.cli.Pipelined(func(pipeliner redis.Pipeliner) error {
+		_, err = c.cli.Pipelined(ctx, func(pipeliner redis.Pipeliner) error {
 			// Remove expired items.
 			now := c.clock.Now()
-			pipeliner.ZRemRangeByScore(c.key, "-inf", fmt.Sprintf("%d", now.Add(-c.ttl).UnixNano()))
-			pipeliner.ZAdd(c.key, redis.Z{
+			pipeliner.ZRemRangeByScore(ctx, c.key, "-inf", fmt.Sprintf("%d", now.Add(-c.ttl).UnixNano()))
+			pipeliner.ZAdd(ctx, c.key, &redis.Z{
 				Score:  float64(now.UnixNano()),
 				Member: key,
 			})
-			countCmd = pipeliner.ZCount(c.key, "-inf", "+inf")
+			countCmd = pipeliner.ZCount(ctx, c.key, "-inf", "+inf")
 			return nil
 		})
 	}()
@@ -150,5 +150,5 @@ func (c *ConcurrentBufferRedis) Add(ctx context.Context, key string) (int64, err
 
 // Remove removes the request identified by the key from the sorted set in Redis.
 func (c *ConcurrentBufferRedis) Remove(key string) error {
-	return errors.Wrap(c.cli.ZRem(c.key, key).Err(), "failed to remove an item from redis set")
+	return errors.Wrap(c.cli.ZRem(context.Background(), c.key, key).Err(), "failed to remove an item from redis set")
 }

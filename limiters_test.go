@@ -8,14 +8,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"github.com/hashicorp/consul/api"
 	"github.com/samuel/go-zookeeper/zk"
 	"github.com/stretchr/testify/suite"
-	"go.etcd.io/etcd/client/v3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 
-	l "github.com/mennanov/limiters"
+	l "github.com/accelbyte/limiters"
 )
 
 type fakeClock struct {
