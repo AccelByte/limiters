@@ -1,8 +1,8 @@
 # Distributed rate limiters for Golang 
 [![Build Status](https://cloud.drone.io/api/badges/mennanov/limiters/status.svg)](https://cloud.drone.io/mennanov/limiters)
 [![codecov](https://codecov.io/gh/mennanov/limiters/branch/master/graph/badge.svg)](https://codecov.io/gh/mennanov/limiters)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mennanov/limiters)](https://goreportcard.com/report/github.com/mennanov/limiters)
-[![GoDoc](https://godoc.org/github.com/mennanov/limiters?status.svg)](https://godoc.org/github.com/mennanov/limiters)
+[![Go Report Card](https://goreportcard.com/badge/github.com/accelbyte/limiters)](https://goreportcard.com/report/github.com/accelbyte/limiters)
+[![GoDoc](https://godoc.org/github.com/accelbyte/limiters?status.svg)](https://godoc.org/github.com/accelbyte/limiters)
 
 Rate limiters for distributed applications in Golang with configurable back-ends and distributed locks.  
 Any types of back-ends and locks can be used that implement certain minimalistic interfaces. 

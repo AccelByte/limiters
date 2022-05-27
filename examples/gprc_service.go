@@ -3,7 +3,7 @@ package examples
 import (
 	"context"
 
-	pb "github.com/mennanov/limiters/examples/helloworld"
+	pb "github.com/accelbyte/limiters/examples/helloworld"
 )
 
 const (

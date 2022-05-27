@@ -2,11 +2,14 @@ package limiters
 
 import (
 	"context"
+	"time"
 
+	"github.com/bsm/redislock"
+	"github.com/go-redis/redis/v8"
 	"github.com/hashicorp/consul/api"
 	"github.com/pkg/errors"
 	"github.com/samuel/go-zookeeper/zk"
-	"go.etcd.io/etcd/client/v3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/client/v3/concurrency"
 )
 
@@ -115,4 +118,34 @@ func (l *LockZookeeper) Lock(_ context.Context) error {
 // Unlock unlocks the lock in Zookeeper.
 func (l *LockZookeeper) Unlock() error {
 	return l.lock.Unlock()
+}
+
+type RedisLocker struct {
+	locker *redislock.Client
+	lock   *redislock.Lock
+	key    string
+	ttl    time.Duration
+}
+
+func NewRedisLocker(redisClient *redis.Client, key string, ttl time.Duration) DistLocker {
+	return &RedisLocker{
+		locker: redislock.New(redisClient),
+		key:    key,
+		ttl:    ttl,
+	}
+}
+
+func (l *RedisLocker) Lock(ctx context.Context) error {
+	lock, err := l.locker.Obtain(ctx, l.key, l.ttl, nil)
+	if err != nil {
+		return err
+	}
+	l.lock = lock
+	return nil
+}
+
+func (l *RedisLocker) Unlock() error {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*1)
+	defer cancelFunc()
+	return l.lock.Release(ctx)
 }
